@@ -8,15 +8,10 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/users.js";
-import postRoutes from "./routes/posts.js";
-import { register } from "./controllers/auth.js";
-import { createPost } from "./controllers/posts.js";
-import { verifyToken } from "./middleware/auth.js";
-import User from "./models/User.js";
-import Post from "./models/Post.js";
-import { users, posts } from "./data/index.js";
+
+import { connect } from "mongoose";
+
+import {register} from "./controllers/auth.js"
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -42,3 +37,20 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
+
+
+// mongoose setup
+
+
+const PORT = process.env.PORT || 6000;
+
+mongoose.connect(process.env.MONGO_URL).then(() => {
+  app.listen(PORT, ()=> {
+    console.log("Listening on port: " + PORT);
+  })
+}).catch(err => console.log(err));
+
+
+// routes with files
+
+app.post('/auth/register', upload.single("picture"), register)
