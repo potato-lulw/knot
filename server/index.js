@@ -10,7 +10,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import { connect } from "mongoose";
-
+import authRoutes from "./routes/auth.js"
 import {register} from "./controllers/auth.js"
 
 /* CONFIGURATIONS */
@@ -38,6 +38,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// routes with files
+
+app.post('/auth/register', upload.single("picture"), register)
+
+
+// routes
+app.use('/auth', authRoutes);
+
 
 // mongoose setup
 
@@ -51,6 +59,4 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 }).catch(err => console.log(err));
 
 
-// routes with files
 
-app.post('/auth/register', upload.single("picture"), register)
